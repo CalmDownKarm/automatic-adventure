@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, List, Union
 from pydantic import BaseModel
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,15 +23,16 @@ async def hello_world():
 
 
 class Todo(BaseModel):
-    todo: Optional[str] = None
-    idx: Optional[int] = None
+    todo: Union[str, None] = None
+    idx: Union[int, None] = None
 
 
 @app.post("/todos/{username}", status_code=200)
-def add_todo(username: str, todo: Optional[Todo]=None):
+def add_todo(username: str, todo: Union[Todo, None]):
     if username not in _TODOS:
         _TODOS[username] = []
     _TODOS[username].append(todo.todo)
+    print(_TODOS[username])
     return {"todo": todo.todo, "user": username}
 
 
@@ -41,7 +42,7 @@ async def get_todos(username):
 
 
 @app.delete("/todos/{username}", status_code=200)
-async def delete_todo(username, todo: Optional[Todo]=None):
+async def delete_todo(username, todo: Todo):
     if todo and todo.idx is not None:
         if 0 <= todo.idx < len(_TODOS[username]):
             popped = _TODOS[username].pop(todo.idx)
@@ -64,12 +65,8 @@ async def plugin_manifest():
 
 @app.get("/openapi.yaml", response_class=Response, status_code=200)
 async def openapi_spec(request: Request):
-    host = request.client.host
-    scheme = request.url.scheme
-    port = request.url.port
-    print(host)
     with open("openapi.yaml") as f:
         text = f.read()
         # This is a trick we do to populate the PLUGIN_HOSTNAME constant in the OpenAPI spec
-        text = text.replace("PLUGIN_HOSTNAME", f"{scheme}://{host}:{port}")
+        # text = text.replace("PLUGIN_HOSTNAME", f"{scheme}://{host}:{port}")
     return Response(content=text, media_type="text/yaml")
