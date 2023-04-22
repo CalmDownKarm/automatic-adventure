@@ -1,3 +1,16 @@
+# Quickstart
+1. Clone the repo
+1. (optional create a venv)
+```python
+python -m venv <env_name>
+source <env_name>/bin/activate
+```
+1. install the requirements `pip install -r requirements.txt`
+1. run the server `uvicorn app:app --reload --port 3333`
+
+
+1. 
+
 # Creating your chatgpt plugin
 
 Creating a custom chatgpt plugin is pretty straightforward, it consists of 3 main bits - 
@@ -109,7 +122,10 @@ a minimal version of the plugin is
 which is just taken from the openai documentation, essentially you're required to declare the api documentation format, the url at which you can find the spec and whether your api requires authentication or not. More information on the schema can be found [here](https://platform.openai.com/docs/plugins/getting-started/plugin-manifest). The description_for_model field is really important as chatgpt looks at it as an input to the user's utterance so you would want to tune it/experiment with it like you would a text prompt for using chatgpt regularly. 
 
 ## API Spec YAML
-The last component before we can use our plugin is the yaml file which defines the API spec in Swagger/OpenAPI. An example for our app is 
+The last component before we can use our plugin is the yaml file which defines the API spec in Swagger/OpenAPI. 
+This is essentially documentation for your endpoints, again the descriptions for each endpoint are looked at by the model when it's deciding which endpoints to hit. Writing this spec is a little bit tedious, however, FastAPI will automatically generate most of the fields for you, once you have your api built, you can run your server, and visit [/openapi.json](http://localhost:3333/openapi.json) to download a json version of the spec that you can then use any [online tool](https://www.json2yaml.com/) to convert the json to a yaml and then editing the description fields. If there are any endpoints that you don't want chatGPT to use, remove them from this spec and it won't send requests to them. 
+
+An example for our app is 
 ```
 openapi: 3.0.1
 info:
@@ -205,6 +221,4 @@ components:
           description: The index of the todo to delete.
           required: true
 ```
-This is essentially documentation for your endpoints, again the descriptions for each endpoint are looked at by the model when it's deciding which endpoints to hit. Writing this spec is a little bit tedious, however, FastAPI will automatically generate most of the fields for you, once you have your api built, you can run your server, and visit [/openapi.json](http://localhost:3333/openapi.json) to download a json version of the spec that you can then use any [online tool](https://www.json2yaml.com/) to convert the json to a yaml and then editing the description fields. If there are any endpoints that you don't want chatGPT to use, remove them from this spec and it won't send requests to them. 
-
 Finally once you're all set up, you log into the chatgpt ui, use the interface to add a plugin, point it to your manifest url and you're all set.
