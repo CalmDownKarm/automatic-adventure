@@ -88,8 +88,6 @@ async def openapi_spec(request: Request):
     print(host)
     with open("openapi.yaml") as f:
         text = f.read()
-        # This is a trick we do to populate the PLUGIN_HOSTNAME constant in the OpenAPI spec
-        text = text.replace("PLUGIN_HOSTNAME", f"{scheme}://{host}:{port}")
     return Response(content=text, media_type="text/yaml")
 ```
 these endpoints return a manifest that you need when you register your plugin with the chatGPT interface, and the api spec in OpenAPI format in a yaml. I'll provide some detail about these in a minute, but for now, we can start a server to host our api locally via the command `uvicorn <filename>:<appname> --port <portnumber>` or in my case `uvicorn app:app --reload --port 3333` the reload parameter just auto-restarts the server if it crashes for some reason.
@@ -221,4 +219,4 @@ components:
           description: The index of the todo to delete.
           required: true
 ```
-Finally once you're all set up, you log into the chatgpt ui, use the interface to add a plugin, point it to your manifest url and you're all set.
+Finally once you're all set up, you log into the chatgpt ui, in the interface go to the plugin store, click "develop your own plugin" and point it to your server url, in my case it was `localhost:3333`
