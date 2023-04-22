@@ -3,7 +3,7 @@
 1. (optional create a venv)
 ```python
 python -m venv <env_name>
-source <env_name>/bin/activate
+source <env_name>/bin/activate~
 ```
 1. install the requirements `pip install -r requirements.txt`
 1. run the server `uvicorn app:app --reload --port 3333`

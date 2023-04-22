@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,12 +23,12 @@ async def hello_world():
 
 
 class Todo(BaseModel):
-    todo: str | None = None
-    idx: int | None = None
+    todo: Optional[str] = None
+    idx: Optional[int] = None
 
 
 @app.post("/todos/{username}", status_code=200)
-def add_todo(username: str, todo: Todo | None = None):
+def add_todo(username: str, todo: Optional[Todo]=None):
     if username not in _TODOS:
         _TODOS[username] = []
     _TODOS[username].append(todo.todo)
@@ -40,7 +41,7 @@ async def get_todos(username):
 
 
 @app.delete("/todos/{username}", status_code=200)
-async def delete_todo(username, todo: Todo | None = None):
+async def delete_todo(username, todo: Optional[Todo]=None):
     if todo and todo.idx is not None:
         if 0 <= todo.idx < len(_TODOS[username]):
             popped = _TODOS[username].pop(todo.idx)
