@@ -7,10 +7,7 @@ source <env_name>/bin/activate~
 ```
 1. install the requirements `pip install -r requirements.txt`
 1. run the server `uvicorn app:app --reload --port 3333`
-
-
-1. 
-
+1. Note for Safari Users - The plugin might not work unless you disable CORS blocking, see [this stackoverflow](https://stackoverflow.com/questions/4556429/disabling-same-origin-policy-in-safari) for instructions on how to do this. It's currently been confirmed to work with firefox and chrome. 
 # Creating your chatgpt plugin
 
 Creating a custom chatgpt plugin is pretty straightforward, it consists of 3 main bits - 
@@ -219,4 +216,24 @@ components:
           description: The index of the todo to delete.
           required: true
 ```
-Finally once you're all set up, you log into the chatgpt ui, in the interface go to the plugin store, click "develop your own plugin" and point it to your server url, in my case it was `localhost:3333`
+## Local Testing
+To locally test the API that we've built I recommend [HTTPie](https://httpie.io/cli) which can also be installed via pip `pip install httpie`
+
+Once you have HTTPie installed, you want to run the server using `uvicorn app:app --port 3333` and then from a seperate terminal instance, send http requests to various endpoints you've defined using HTTPie. For example, `http localhost:3333/` will send a GET request to the root path(/) and you should get a JSON with key "Hello" and value "world"
+
+<img src="get_root.png" width="600" height="200" />
+
+Similarly, `http POST localhost:3333/todos/karm todo="test the plugin"` will send a post request to the TODO creation endpoint with a json data object and subsequently, `http localhost:3333/todos/karm` should return a list of todos with the user karm, that should have the todo "test the plugin".
+
+<img src="get_todos.png" width="600" height="200" />
+
+
+## Setting up the plugin
+
+Finally once you're all set up, you log into the chatgpt ui, in the interface , scroll down the list of plugins until you see "plugin store", click "develop your own plugin" and point it to your server url, in my case it was `localhost:3333`
+
+<img src="plugin_store.png" width="400" height="200" />
+
+<img src="install_plugin.png" width="400" height="200" />
+
+<img src="path_to_plugin.png" width="400" height="200" />
